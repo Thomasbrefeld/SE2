@@ -41,6 +41,27 @@ namespace SE2
             //reminders.Add(new Reminder("Monday Class", new DateTime(2021, 11, 28, 16, 20, 0)));
             //reminders.Add(new Reminder("Wednesday Class", new DateTime(2021, 12, 1, 16, 20, 0)));
             loadRemindersData();
+            
+            //events.Add(new Event("Graduation", new DateTime(2021, 12, 4, 10, 0, 0)));
+            //events.Add(new Event("Final Exams", new DateTime(2021, 12, 13, 12, 0, 0)));
+            //events.Add(new Event("End of Final Exams", new DateTime(2021, 12, 16, 12, 0, 0)));
+            //events.Add(new Event("End of Semester", new DateTime(2021, 12, 17, 12, 0, 0)));
+
+            loadEventsData();
+
+            this.Closing += (s, e) => saveRemindersData();
+            this.Closing += (s, e) => saveEventsData();
+        }
+
+        private void loadRemindersData()
+        {
+            using (Stream stream = File.Open(PATH + "/Data/reminders.bin", FileMode.Open))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                reminders = (List<Reminder>)bformatter.Deserialize(stream);
+            }
+
+            reminderStackPanel.Children.Clear();
             foreach (Reminder r in reminders)
             {
                 Grid g = new Grid();
@@ -65,15 +86,26 @@ namespace SE2
 
                 reminderStackPanel.Children.Add(g);
             }
-            saveRemindersData();
+        }
 
-            //events.Add(new Event("Graduation", new DateTime(2021, 12, 4, 10, 0, 0)));
-            //events.Add(new Event("Final Exams", new DateTime(2021, 12, 13, 12, 0, 0)));
-            //events.Add(new Event("End of Final Exams", new DateTime(2021, 12, 16, 12, 0, 0)));
-            //events.Add(new Event("End of Semester", new DateTime(2021, 12, 17, 12, 0, 0)));
+        public void saveRemindersData()
+        {
+            using (Stream stream = File.Open(PATH + "/Data/reminders.bin", FileMode.Create))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                bformatter.Serialize(stream, reminders);
+            }
+        }
 
-            loadEventsData();
+        private void loadEventsData()
+        {
+            using (Stream stream = File.Open(PATH + "/Data/events.bin", FileMode.Open))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                events = (List<Event>)bformatter.Deserialize(stream);
+            }
 
+            eventStackPanel.Children.Clear();
             foreach (Event r in events)
             {
                 Grid g = new Grid();
@@ -98,35 +130,6 @@ namespace SE2
 
                 eventStackPanel.Children.Add(g);
             }
-
-            saveEventsData();
-        }
-
-        private void loadRemindersData()
-        {
-            using (Stream stream = File.Open(PATH + "/Data/reminders.bin", FileMode.Open))
-            {
-                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                reminders = (List<Reminder>)bformatter.Deserialize(stream);
-            }
-        }
-
-        public void saveRemindersData()
-        {
-            using (Stream stream = File.Open(PATH + "/Data/reminders.bin", FileMode.Create))
-            {
-                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                bformatter.Serialize(stream, reminders);
-            }
-        }
-
-        private void loadEventsData()
-        {
-            using (Stream stream = File.Open(PATH + "/Data/events.bin", FileMode.Open))
-            {
-                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                events = (List<Event>)bformatter.Deserialize(stream);
-            }
         }
 
         public void saveEventsData()
@@ -136,6 +139,20 @@ namespace SE2
                 var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                 bformatter.Serialize(stream, events);
             }
+        }
+
+        public void newReminderBUttonClick(object sender, RoutedEventArgs e)
+        {
+            AddReminderWindow addReminderWindow = new AddReminderWindow(PATH, reminders);
+            addReminderWindow.ShowDialog();
+            loadRemindersData();
+        }
+
+        public void removeReminderBUttonClick(object sender, RoutedEventArgs e)
+        {
+            RemoveReminderWindow removeReminderWindow = new RemoveReminderWindow(PATH, reminders);
+            removeReminderWindow.ShowDialog();
+            loadRemindersData();
         }
 
         private void timerTick(object sender, EventArgs e)
