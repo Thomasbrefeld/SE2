@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Text.Json;
 
 namespace SE2
 {
@@ -20,27 +21,6 @@ namespace SE2
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public class Reminder
-    {
-        private string name;
-        private DateTime dateTime;
-
-        public Reminder(string n, DateTime d)
-        {
-            name = n;
-            dateTime = d;
-        }
-
-        public string getName()
-        {
-            return name;
-        }
-
-        public DateTime getTime()
-        {
-            return dateTime;
-        }
-    }
 
     public partial class MainWindow : Window
     {
@@ -114,6 +94,16 @@ namespace SE2
 
                 eventStackPanel.Children.Add(g);
             }
+        }
+
+        private void loadData()
+        {
+        }
+
+        public void saveData()
+        {
+            //string json = JsonSerializer.Serialize<Reminder>(reminders);
+
         }
 
         private void timerTick(object sender, EventArgs e)

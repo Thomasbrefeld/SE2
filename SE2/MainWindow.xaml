@@ -33,7 +33,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Reminders" Height="20" VerticalAlignment="Top">
-                <Grid  x:Name="FormLayoutGrid">
+                <Grid x:Name="FormLayoutGrid">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
