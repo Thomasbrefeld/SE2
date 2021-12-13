@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 namespace SE2
 {
     [Serializable]
-    public class Reminder
+    class Event
     {
         private string name;
         private DateTime dateTime;
 
-        public Reminder(string n, DateTime d)
+        public Event(string n, DateTime d)
         {
             name = n;
             dateTime = d;
