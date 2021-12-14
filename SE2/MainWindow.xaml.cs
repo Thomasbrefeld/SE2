@@ -21,10 +21,12 @@ namespace SE2
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-
     public partial class MainWindow : Window
     {
-        static string PATH = "C:/Users/thoma/Desktop/School/Software Engineering 2/SE2/SE2";
+        //Set path_Loc debug value
+        static readonly string PATH = path_Loc(true);
+
+        //Declare timer 
         static DispatcherTimer timer = new DispatcherTimer();
         List<Reminder> reminders = new List<Reminder>();
         List<Event> events = new List<Event>();
@@ -36,7 +38,6 @@ namespace SE2
             InitializeComponent();
 
             MainPageTime.Content = DateTime.Now.ToString();
-
             loadRemindersData();
             loadEventsData();
             loadToDoData();
@@ -46,8 +47,15 @@ namespace SE2
             this.Closing += (s, e) => saveToDoData();
         }
 
-        private void loadRemindersData()
+        private static string path_Loc(bool debug)
         {
+            if (debug)
+                return "C:/Users/Computer-WS/source/repos/SE2/SE2";
+            else return Directory.GetCurrentDirectory();
+        }
+
+        private void loadRemindersData(){
+
             using (Stream stream = File.Open(PATH + "/Data/reminders.bin", FileMode.Open))
             {
                 var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
@@ -216,5 +224,6 @@ namespace SE2
                 loadToDoData();
             }
         }
+
     }
 }
