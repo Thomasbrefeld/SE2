@@ -38,7 +38,7 @@
                     <ColumnDefinition Width="12"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="addReminderTimeHour" VerticalContentAlignment="Center">
+                <TextBox x:Name="addReminderTimeHour" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">
                     <TextBox.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="5,0,0,5"/>
