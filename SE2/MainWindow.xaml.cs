@@ -30,31 +30,21 @@ namespace SE2
         static DispatcherTimer timer = new DispatcherTimer();
         List<Reminder> reminders = new List<Reminder>();
         List<Event> events = new List<Event>();
+        List<ToDo> toDos = new List<ToDo>();
+        List<ToDo> completedToDos = new List<ToDo>();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            //Initialize timer.
-            timer.Interval = TimeSpan.FromSeconds(.1);
-            timer.Tick += timerTick;
-            timer.Start();
             MainPageTime.Content = DateTime.Now.ToString();
-            
-            
-            //reminders.Add(new Reminder("Monday Class", new DateTime(2021, 11, 28, 16, 20, 0)));
-            //reminders.Add(new Reminder("Wednesday Class", new DateTime(2021, 12, 1, 16, 20, 0)));
             loadRemindersData();
-            
-            //events.Add(new Event("Graduation", new DateTime(2021, 12, 4, 10, 0, 0)));
-            //events.Add(new Event("Final Exams", new DateTime(2021, 12, 13, 12, 0, 0)));
-            //events.Add(new Event("End of Final Exams", new DateTime(2021, 12, 16, 12, 0, 0)));
-            //events.Add(new Event("End of Semester", new DateTime(2021, 12, 17, 12, 0, 0)));
-
             loadEventsData();
+            loadToDoData();
 
             this.Closing += (s, e) => saveRemindersData();
             this.Closing += (s, e) => saveEventsData();
+            this.Closing += (s, e) => saveToDoData();
         }
 
         private static string path_Loc(bool debug)
@@ -99,8 +89,7 @@ namespace SE2
             }
         }
 
-
-        public void saveRemindersData()
+        private void saveRemindersData()
         {
             using (Stream stream = File.Open(PATH + "/Data/reminders.bin", FileMode.Create))
             {
@@ -144,7 +133,7 @@ namespace SE2
             }
         }
 
-        public void saveEventsData()
+        private void saveEventsData()
         {
             using (Stream stream = File.Open(PATH + "/Data/events.bin", FileMode.Create))
             {
@@ -153,24 +142,87 @@ namespace SE2
             }
         }
 
-        public void newReminderBUttonClick(object sender, RoutedEventArgs e)
+        private void loadToDoData()
+        {
+            using (Stream stream = File.Open(PATH + "/Data/todos.bin", FileMode.Open))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                toDos = (List<ToDo>)bformatter.Deserialize(stream);
+            }
+            ToDoListBox.Items.Clear();
+            foreach (ToDo t in toDos)
+            {
+                ToDoListBox.Items.Add(t.getName());
+            }
+
+            using (Stream stream = File.Open(PATH + "/Data/completedtodos.bin", FileMode.Open))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                completedToDos = (List<ToDo>)bformatter.Deserialize(stream);
+            }
+            CompletedToDoListBox.Items.Clear();
+            foreach (ToDo c in completedToDos)
+            {
+                CompletedToDoListBox.Items.Add(c.getName());
+            }
+
+
+        }
+
+        private void saveToDoData()
+        {
+            using (Stream stream = File.Open(PATH + "/Data/todos.bin", FileMode.Create))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                bformatter.Serialize(stream, toDos);
+            }
+            using (Stream stream = File.Open(PATH + "/Data/completedtodos.bin", FileMode.Create))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                bformatter.Serialize(stream, completedToDos);
+            }
+        }
+
+        private void newReminderBUttonClick(object sender, RoutedEventArgs e)
         {
             AddReminderWindow addReminderWindow = new AddReminderWindow(PATH, reminders);
             addReminderWindow.ShowDialog();
             loadRemindersData();
         }
 
-        public void removeReminderBUttonClick(object sender, RoutedEventArgs e)
+        private void removeReminderBUttonClick(object sender, RoutedEventArgs e)
         {
             RemoveReminderWindow removeReminderWindow = new RemoveReminderWindow(PATH, reminders);
             removeReminderWindow.ShowDialog();
             loadRemindersData();
         }
 
-        private void timerTick(object sender, EventArgs e)
+        private void AddItemToDoButton_Click(object sender, RoutedEventArgs e)
         {
-            //RemindersClockDate.Content = DateTime.Now.ToString("MMMM dd, yyyy");
-            //RemindersClockTime.Content = DateTime.Now.ToString("HH:mm:ss");
+            //TODO: be able to add to-dos
+        }
+
+        private void MarkItemAsCompleted_Click(object sender, RoutedEventArgs e)
+        {
+            if (ToDoListBox.SelectedIndex != -1)
+            {
+                completedToDos.Add(toDos[ToDoListBox.SelectedIndex]);
+                toDos.RemoveAt(ToDoListBox.SelectedIndex);
+                CompletedToDoListBox.SelectedIndex = -1;
+                saveToDoData();
+                loadToDoData();
+            }
+        }
+
+        private void DeleteItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (CompletedToDoListBox.SelectedIndex != -1)
+            {
+                completedToDos.RemoveAt(CompletedToDoListBox.SelectedIndex);
+                CompletedToDoListBox.SelectedIndex = -1;
+                saveToDoData();
+                loadToDoData();
+            }
         }
 
     }
