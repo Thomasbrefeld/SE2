@@ -5,25 +5,17 @@ using System.Text;
 namespace SE2
 {
     [Serializable]
-    public class Event
+    class ToDo
     {
         private string name;
-        private DateTime dateTime;
-
-        public Event(string n, DateTime d)
+        public ToDo(string n)
         {
             name = n;
-            dateTime = d;
         }
 
         public string getName()
         {
             return name;
-        }
-
-        public DateTime getTime()
-        {
-            return dateTime;
         }
     }
 }
